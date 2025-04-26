@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مجمع ابتسامة الورود لطب الأسنان</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: #fff;
+            margin: 0;
+            padding: 0;
+            color: #23306e;
+        }
+        .container {
+            max-width: 400px;
+            margin: 40px auto;
+            background: #f9f9f9;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(35,48,110,0.08);
+            padding: 32px 24px 24px 24px;
+            text-align: center;
+        }
+        .logo {
+            width: 120px;
+            margin-bottom: 16px;
+        }
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: #e84ca6;
+        }
+        p {
+            color: #23306e;
+            margin-bottom: 24px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        label {
+            text-align: right;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        input, select {
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        button {
+            background: linear-gradient(90deg, #e84ca6 0%, #23306e 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: linear-gradient(90deg, #23306e 0%, #e84ca6 100%);
+        }
+        .success-message {
+            display: none;
+            background: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .error-message {
+            display: none;
+            background: #f44336;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="Untitled-2.png" alt="شعار ابتسامة الورود" class="logo">
+        <h1>احجز استشارتك الآن</h1>
+        <p>يرجى تعبئة النموذج وسيتم التواصل معكم في أقرب وقت</p>
+        <form id="appointmentForm">
+            <div>
+                <label for="name">الاسم</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div>
+                <label for="city">المدينة</label>
+                <input type="text" id="city" name="city" required>
+            </div>
+            <div>
+                <label for="phone">رقم الهاتف</label>
+                <input type="tel" id="phone" name="phone" required pattern="[0-9]{10,15}" placeholder="05xxxxxxxx">
+            </div>
+            <div>
+                <label for="service">الخدمة المطلوبة</label>
+                <select id="service" name="service" required>
+                    <option value="">اختر الخدمة</option>
+                    <option value="زراعة الأسنان السويسرية">زراعة الأسنان السويسرية</option>
+                    <option value="تركيبات الأسنان الزيركون">تركيبات الأسنان الزيركون</option>
+                    <option value="تقويم الأسنان الشفاف">تقويم الأسنان الشفاف</option>
+                    <option value="تقويم الأسنان المعدني">تقويم الأسنان المعدني</option>
+                    <option value="معالجات الأسنان">معالجات الأسنان</option>
+                    <option value="أخرى">أخرى</option>
+                </select>
+            </div>
+            <button type="submit">إرسال</button>
+        </form>
+        <div id="successMessage" class="success-message">
+            تم إرسال طلبك بنجاح! سنتواصل معك قريباً.
+        </div>
+        <div id="errorMessage" class="error-message">
+            حدث خطأ أثناء إرسال الطلب. يرجى المحاولة مرة أخرى.
+        </div>
+    </div>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxwGAbkzKXjMcR3IKsiMbJL3SzGJTSqfmj4FXuoRAwSZjB95jsnoguA3pcZX4Qr183L/exec';
+        const form = document.forms['appointmentForm'];
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            
+            // إضافة التوقيت الميلادي (Gregorian)
+            const now = new Date();
+            const gregorianTimestamp = now.getFullYear() + '-' + 
+                String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                String(now.getDate()).padStart(2, '0') + ' ' + 
+                String(now.getHours()).padStart(2, '0') + ':' + 
+                String(now.getMinutes()).padStart(2, '0') + ':' + 
+                String(now.getSeconds()).padStart(2, '0');
+            formData.append('timestamp', gregorianTimestamp);
+            
+            fetch(scriptURL, { 
+                method: 'POST', 
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    successMessage.style.display = 'block';
+                    errorMessage.style.display = 'none';
+                    form.reset();
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                    }, 5000);
+                } else {
+                    throw new Error('Network response was not ok');
+                }
+            })
+            .catch(error => {
+                console.error('Error!', error.message);
+                errorMessage.style.display = 'block';
+                successMessage.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html> 
